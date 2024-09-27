@@ -30,25 +30,27 @@ use winapi::{
     shared::{
         dxgi, dxgi1_2, dxgitype,
         guiddef::GUID,
-        minwindef::{BOOL, LPARAM, LRESULT, UINT, WPARAM},
-        windef::{HWND, RECT},
+        minwindef::{BOOL, FALSE, LPARAM, LRESULT, UINT, WPARAM},
+        windef::{HDESK__, HWND, RECT},
         winerror::{DXGI_ERROR_ACCESS_LOST, DXGI_ERROR_WAIT_TIMEOUT, SUCCEEDED},
     },
     um::{
         d3d11, d3dcommon,
         libloaderapi::GetModuleHandleA,
         wingdi::{GetDeviceCaps, HORZRES, VERTRES},
+        winnt::GENERIC_ALL,
         winuser::{
             CreateWindowExA, DefWindowProcA, DispatchMessageA, EnumWindows, GetDC,
             GetSystemMetrics, GetWindowInfo, GetWindowLongA, GetWindowRect, GetWindowTextA,
-            GetWindowTextLengthA, IsIconic, IsWindowVisible, PeekMessageA, RegisterClassExA,
-            SendInput, SetClipboardViewer, TranslateMessage, GWL_EXSTYLE, INPUT, INPUT_KEYBOARD,
-            INPUT_MOUSE, KEYEVENTF_EXTENDEDKEY, KEYEVENTF_KEYUP, KEYEVENTF_SCANCODE,
-            MOUSEEVENTF_ABSOLUTE, MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP, MOUSEEVENTF_MIDDLEDOWN,
-            MOUSEEVENTF_MIDDLEUP, MOUSEEVENTF_MOVE, MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP,
-            MOUSEEVENTF_WHEEL, MSG, PM_REMOVE, SM_CXSIZEFRAME, WINDOWINFO, WM_DRAWCLIPBOARD,
-            WM_KILLFOCUS, WM_QUIT, WM_SETFOCUS, WNDCLASSEXA, WS_CLIPCHILDREN, WS_CLIPSIBLINGS,
-            WS_DLGFRAME, WS_EX_TOOLWINDOW, WS_POPUP,
+            GetWindowTextLengthA, IsIconic, IsWindowVisible, OpenInputDesktop, PeekMessageA,
+            RegisterClassExA, SendInput, SetClipboardViewer, SetThreadDesktop, TranslateMessage,
+            DF_ALLOWOTHERACCOUNTHOOK, GWL_EXSTYLE, INPUT, INPUT_KEYBOARD, INPUT_MOUSE,
+            KEYEVENTF_EXTENDEDKEY, KEYEVENTF_KEYUP, KEYEVENTF_SCANCODE, MOUSEEVENTF_ABSOLUTE,
+            MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP, MOUSEEVENTF_MIDDLEDOWN, MOUSEEVENTF_MIDDLEUP,
+            MOUSEEVENTF_MOVE, MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP, MOUSEEVENTF_WHEEL, MSG,
+            PM_REMOVE, SM_CXSIZEFRAME, WINDOWINFO, WM_DRAWCLIPBOARD, WM_KILLFOCUS, WM_QUIT,
+            WM_SETFOCUS, WNDCLASSEXA, WS_CLIPCHILDREN, WS_CLIPSIBLINGS, WS_DLGFRAME,
+            WS_EX_TOOLWINDOW, WS_POPUP,
         },
     },
 };
@@ -611,6 +613,15 @@ pub fn init_d3d11() -> Result<()> {
         if !SUCCEEDED(ret) {
             continue;
         }
+
+        let desktop = unsafe { OpenInputDesktop(DF_ALLOWOTHERACCOUNTHOOK, FALSE, GENERIC_ALL) };
+
+        let ret = unsafe { SetThreadDesktop(desktop as *mut HDESK__) };
+        if !SUCCEEDED(ret) {
+            error!("SetThreadDesktop failed with error code {:x}", ret);
+            continue;
+        }
+
         P_DIRECT3D_DEVICE.store(p_d3d11_device, atomic::Ordering::Release);
         P_DIRECT3D_DEVICE_CONTEXT.store(p_d3d11_device_context, atomic::Ordering::Release);
         let d3d11_device = unsafe { p_d3d11_device.as_ref() }.context("d3d11 device null")?;
