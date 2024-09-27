@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "sanzu-v*"
+      - "sanzu-qarnot-v*"
 
 env:
   GITHUB_REF: "${{ github.ref }}"
