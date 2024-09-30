@@ -11,26 +11,26 @@ env:
 
 jobs:
 
-  docker-alpine:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          components: rustfmt
-      - name: build
-        run: cargo clean && cd build && make alpine
-
-      - name: Upload resulting 'alpine bins'
-        uses: actions/upload-artifact@v3
-        with:
-          name: sanzu-alpine-release
-          path: |
-            ./target/release/sanzu_client
-            ./target/release/sanzu_server
-            ./target/release/sanzu_proxy
-            ./target/release/sanzu_broker
+  # docker-alpine:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions-rs/toolchain@v1
+  #       with:
+  #         toolchain: stable
+  #         components: rustfmt
+  #     - name: build
+  #       run: cargo clean && cd build && make alpine
+  #
+  #     - name: Upload resulting 'alpine bins'
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: sanzu-alpine-release
+  #         path: |
+  #           ./target/release/sanzu_client
+  #           ./target/release/sanzu_server
+  #           ./target/release/sanzu_proxy
+  #           ./target/release/sanzu_broker
 
 
   docker-debian:
@@ -45,7 +45,7 @@ jobs:
         run: cargo clean && cd build && make debian
 
       - name: Upload resulting 'debian pkg'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sanzu-debian-release
           path: ./target/debian/sanzu*.deb
@@ -62,7 +62,7 @@ jobs:
         run: cargo clean && cd build && make almalinux8
 
       - name: Upload resulting 'alma8 pkg'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sanzu-alma8-release
           path: ./target/generate-rpm/sanzu*.rpm
@@ -79,7 +79,7 @@ jobs:
         run: cargo clean && cd build && make almalinux9
 
       - name: Upload resulting 'alma9 pkg'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sanzu-alma9-release
           path: ./target/generate-rpm/sanzu*.rpm
@@ -96,7 +96,7 @@ jobs:
         run: cargo clean && cd build && make windows
 
       - name: Upload resulting 'windows pkg'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sanzu-windows-release
           path: ./target/windows/sanzu*.zip
@@ -104,7 +104,7 @@ jobs:
   release:
     # From https://github.com/cloudflare/wrangler/blob/master/.github/workflows/release.yml
     name: GitHub Release
-    needs: [docker-alpine, docker-alma8, docker-alma9, docker-debian, docker-windows]
+    needs: [docker-alma8, docker-alma9, docker-debian, docker-windows]
     runs-on: ubuntu-latest
     steps:
       - name: Query version number
@@ -131,35 +131,39 @@ jobs:
           body: ${{ steps.changelog_reader.outputs.changes }}
           draft: true
 
-      - name: Download Alpine artifact
-        uses: actions/download-artifact@v1
-        with:
-          name: sanzu-alpine-release
+      # - name: Download Alpine artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: sanzu-alpine-release
 
       - name: Download Debian artifact
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: sanzu-debian-release
+          path: sanzu-debian-release
 
       - name: Download Alma8 artifact
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: sanzu-alma8-release
+          path: sanzu-alma8-release
 
       - name: Download Alma9 artifact
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: sanzu-alma9-release
+          path: sanzu-alma9-release
 
       - name: Download Windows artifact
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: sanzu-windows-release
+          path: sanzu-windows-release
 
-      - name: compression_alpine
-        shell: bash
-        run: |
-          zip -r sanzu-alpine.zip sanzu-alpine-release
+      # - name: compression_alpine
+      #   shell: bash
+      #   run: |
+      #     zip -r sanzu-alpine.zip sanzu-alpine-release
 
       - name: compression_debian
         shell: bash
@@ -181,15 +185,15 @@ jobs:
         run: |
           zip -r sanzu-windows.zip sanzu-windows-release
 
-      - name: Release Alpine artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./sanzu-alpine.zip
-          asset_content_type: application/octet-stream
-          asset_name: sanzu-alpine-${{ steps.get_version.outputs.VERSION }}.zip
+      # - name: Release Alpine artifact
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: ./sanzu-alpine.zip
+      #     asset_content_type: application/octet-stream
+      #     asset_name: sanzu-alpine-${{ steps.get_version.outputs.VERSION }}.zip
 
       - name: Release Debian artifact
         uses: actions/upload-release-asset@v1

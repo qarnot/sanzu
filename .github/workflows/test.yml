@@ -57,22 +57,22 @@ jobs:
     # Upload resulting artifacts:
     # sanzu_broker, sanzu_client, sanzu_proxy, sanzu_server
     - name: Upload resulting 'sanzu_broker'
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v4
       with:
         name: sanzu_broker
         path: ./target/release/sanzu_broker
     - name: Upload resulting 'sanzu_client'
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v4
       with:
         name: sanzu_client
         path: ./target/release/sanzu_client
     - name: Upload resulting 'sanzu_proxy'
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v4
       with:
         name: sanzu_proxy
         path: ./target/release/sanzu_proxy
     - name: Upload resulting 'sanzu_server'
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v4
       with:
         name: sanzu_server
         path: ./target/release/sanzu_server
@@ -127,19 +127,19 @@ jobs:
          cargo wix --nocapture --package=sanzu
 
     - name: Upload resulting 'sanzu_client.exe'
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v4
       with:
         name: sanzu_client.exe
         path: ./target/release/sanzu_client.exe
 
     - name: Upload resulting 'sanzu_server.exe'
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v4
       with:
         name: sanzu_server.exe
         path: ./target/release/sanzu_server.exe
 
     - name: Upload resulting sanzu msi
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: sanzu_msi
         path: ./target/wix/*.msi
@@ -156,7 +156,7 @@ jobs:
         run: cargo clean && cd build && make alpine
 
       - name: Upload resulting 'alpine bins'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bins_alpine
           path: ./target/release/sanzu_client
@@ -173,7 +173,7 @@ jobs:
         run: cargo clean && cd build && make almalinux8
 
       - name: Upload resulting 'alma8 pkg'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pkg_alma8
           path: ./target/generate-rpm/*
@@ -190,7 +190,7 @@ jobs:
         run: cargo clean && cd build && make almalinux9
 
       - name: Upload resulting 'alma9 pkg'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pkg_alma9
           path: ./target/generate-rpm/*
@@ -218,7 +218,7 @@ jobs:
         run: cargo clean && cd build && make debian
 
       - name: Upload resulting 'debian pkg'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pkg_debian
           path: ./target/debian/*
