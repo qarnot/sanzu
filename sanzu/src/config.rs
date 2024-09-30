@@ -136,7 +136,7 @@ mod tests {
     use super::*;
     use toml;
 
-    const CONF: &'static str = r#"
+    const CONF: &str = r#"
 [video]
 max_fps = 60
 max_stall_img = 30
@@ -156,7 +156,7 @@ tune = "zerolatency"
 
     #[test]
     fn test_conf() {
-        let config: ConfigServer = toml::from_str(&CONF).unwrap();
+        let config: ConfigServer = toml::from_str(CONF).unwrap();
         dbg!(&config);
     }
 }

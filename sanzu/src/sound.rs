@@ -364,11 +364,11 @@ fn dequeue_to_sink<T>(
 /// Holds SoundEncoder information
 ///
 /// - the Sound encoder receives raw sound and stores it to the buffer queue
-/// `buffering_queue`
+///   `buffering_queue`
 /// - data in the buffer queue is polled by `read_sound` from there and sent to
-/// the `sound_buffer`
+///   the `sound_buffer`
 /// - this data is compressed in the separated thread and compressed data is
-/// serialized into messages
+///   serialized into messages
 /// - those messages are retrieved by polling `recv_events`
 ///
 /// You may notice that the `sound_buffer` may be avoided. This designed is done

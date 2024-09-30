@@ -32,6 +32,7 @@ pub trait Server {
     /// - set it to the future resolution
     /// - set the screen to this new mode
     /// - delete the old video mode
+    ///
     /// If everything is ok, we update the video index state, and recreate a new
     /// frame grabber according to the new resolution
     fn change_resolution(&mut self, config: &ConfigServer, width: u32, height: u32) -> Result<()>;
