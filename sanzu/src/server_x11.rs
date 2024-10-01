@@ -565,7 +565,7 @@ fn connect_to_dbus(notif_sender: Sender<Notifications>) -> Result<dbus::blocking
         Duration::from_millis(500),
     );
     proxy
-        .method_call(
+        .method_call::<(), _, _, _>(
             "org.freedesktop.DBus.Monitoring",
             "BecomeMonitor",
             (vec![rule.match_str()], 0u32),
